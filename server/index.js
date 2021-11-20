@@ -2,12 +2,10 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 /* eslint-disable import/extensions */
-const path = require('path');
 const express = require('express');
 const db = require('../database/index.js');
 
 const app = express();
-// const { response } = require('express');
 
 app.set('port', 3000);
 app.use(express.json()); // Allows us to parse json
@@ -113,9 +111,6 @@ app.listen(app.get('port'), () => {
 });
 
 // TODO: Look into Supertest for testing. Call supertest functions from within Jest
-
-// Example query to return array of related_product_ids
-// `SELECT array_agg(related.related_product_id) AS result FROM product LEFT JOIN (SELECT current_product_id, related_product_id FROM related) AS related ON product.id=related.current_product_id WHERE id=${id} GROUP BY product.id`
 
 // Example query to return data as an array:
 // SELECT

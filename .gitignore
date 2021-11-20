@@ -1,7 +1,7 @@
-./database/characteristics.csv
-./database/features.csv
-./database/photos.csv
-./database/related.csv
-./database/skus.csv
-./database/styles.csv
-node_modules
+database/characteristics.csv
+database/features.csv
+database/photos.csv
+database/related.csv
+database/skus.csv
+database/styles.csv
+node_modules/
