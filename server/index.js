@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable comma-dangle */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
@@ -10,7 +11,7 @@ const app = express();
 app.set('port', 3000);
 app.use(express.json()); // Allows us to parse json
 
-// Return list of products
+// Return all products
 app.get('/products', (req, res) => {
   const count = req.query.count ? req.query.count : 5;
   const page = req.query.page ? req.query.page : 1;
@@ -23,20 +24,20 @@ app.get('/products', (req, res) => {
   });
 });
 
-// Return all product level info for specified product_id
+// Return all info for current product
 app.get('/products/:product_id', (req, res) => {
-  let productInfo = {};
+  const productInfo = {};
   db.query(`SELECT * FROM products WHERE id = ${req.params.product_id}`, (err, data) => {
     if (err) {
       console.log(err);
     }
     // Populate productInfo
-    for (let key in data[0]) {
+    for (const key in data[0]) {
       productInfo[key] = data[0][key];
     }
   });
 
-  let features = [];
+  const features = [];
   db.query(`SELECT * FROM features WHERE product_id = ${req.params.product_id}`, (err, data) => {
     if (err) {
       console.log(err);
@@ -54,46 +55,95 @@ app.get('/products/:product_id', (req, res) => {
   });
 });
 
-// Return obj containing all available styles for current product
+// Return obj containing all styles for current product
 app.get('/products/:product_id/styles', (req, res) => {
-  let styles = {};
+  // Initialize styles object
+  const styles = {};
   styles.product_id = req.params.product_id;
-  let results = [];
-  db.query(`SELECT * FROM styles WHERE productId = ${req.params.product_id}`, (err, data) => {
+
+  let results = []; // Array of objects. One object for each style_id
+  // db.query(`SELECT * FROM styles WHERE productId = ${req.params.product_id}`, (err, data) => {
+    db.query(`SELECT id AS style_id, name, original_price, sale_price, default_style AS 'default?' FROM styles WHERE productId = ${req.params.product_id}`, (err, data) => {
     if (err) {
       console.log(err);
     }
-    console.log(data);
-    // For each obj in data, create a corresponding styleObj and push to results
-    data.forEach((obj) => {
-      let styleObj = {
-        style_id: obj.id,
-        name: obj.name,
-        original_price: obj.original_price,
-        sale_price: obj.sale_price ? obj.sale_price : '0',
-        'default?': obj.default_style === 0,
-        // photos: [],
-        // skus: {}
-      };
-      // Populate photos array with obj{thumbnail_url, url} from photos table
-      let photos = [];
-      db.query(`SELECT * FROM photos WHERE styleId = ${obj.id}`, (err, data) => {
-        if (err) {
-          console.log(err);
-        }
-        console.log('PHOTOS FOR THIS STYLE ID:', data);
-        data.forEach((obj) => {
-          let photoObj = {
-            thumbnail_url: '',
-            url: ''
-          };
-        });
-      });
-      // Populate skus obj
-    });
+    results = data;
+    styles.results = results;
+
+    // Create photos array and add to current object
+
+    // TODO: Convert default_style from a 1/0 to true/false
+    res.send(styles);
   });
-  res.send(styles);
 });
+
+// const styleObj = {
+//   style_id: stylesObj.id,
+//   name: stylesObj.name,
+//   original_price: stylesObj.original_price,
+//   sale_price: stylesObj.sale_price === 'null' ? '0' : stylesObj.sale_price,
+//   'default?': stylesObj.default_style === 0,
+// };
+
+// app.get('/products/:product_id/styles', (req, res) => {
+//   // Initialize styles object
+//   const styles = {};
+//   styles.product_id = req.params.product_id;
+
+//   const results = [];
+//   db.query(`SELECT * FROM styles WHERE productId = ${req.params.product_id}`, (stylesErr, stylesData) => {
+//     if (stylesErr) {
+//       console.log(stylesErr);
+//     }
+//     const stylesPromise = new Promise((resolveStyles, rejectStyles) => {
+//       stylesData.forEach((stylesObj) => {
+//         const styleObj = {
+//           style_id: stylesObj.id,
+//           name: stylesObj.name,
+//           original_price: stylesObj.original_price,
+//           sale_price: stylesObj.sale_price === 'null' ? '0' : stylesObj.sale_price,
+//           'default?': stylesObj.default_style === 0,
+//         };
+
+//         const photos = [];
+//         db.query(`SELECT * FROM photos WHERE styleId = ${stylesObj.id}`, (photosErr, photosData) => {
+//           if (photosErr) {
+//             console.log(photosErr);
+//           }
+//           const photosPromise = new Promise((resolvePhotos, rejectPhotos) => {
+//             photosData.forEach((photosObj) => {
+//               const photoObj = {
+//                 thumbnail_url: photosObj.thumbnail_url,
+//                 url: photosObj.url
+//               };
+//               photos.push(photoObj);
+//             });
+//             // styleObj.photos = photos;
+//             resolvePhotos();
+//           });
+//         });
+
+//         // // Populate skus obj for current style_id
+//         // const skus = {}; // skus obj might contain many objects
+//         // db.query(`SELECT * FROM skus WHERE styleId = ${stylesObj.id}`, (skusErr, skusData) => {
+//         //   if (skusErr) {
+//         //     console.log(skusErr);
+//         //   }
+//         //   skusData.forEach((skusObj) => { // for each skusObj
+//         //     const skuObj = {
+//         //       quantity: skusObj.quantity,
+//         //       size: skusObj.size
+//         //     };
+//         //     skus[skusObj.styleId] = skuObj;
+//         //   });
+//         // });
+//         // styleObj.skus = skus;
+
+//         results.push(styleObj);
+//       });
+//     });
+//   });
+// });
 
 // Return array of product_ids related to current product
 app.get('/products/:product_id/related', (req, res) => {

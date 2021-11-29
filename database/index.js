@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+/* eslint-disable comma-dangle */
 const mysql = require('mysql');
 
 const connection = mysql.createConnection({
