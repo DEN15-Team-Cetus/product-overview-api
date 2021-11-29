@@ -4,4 +4,4 @@
 /database/related.csv
 /database/skus.csv
 /database/styles.csv
-/node_modules/
+node_modules/

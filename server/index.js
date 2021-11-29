@@ -61,89 +61,32 @@ app.get('/products/:product_id/styles', (req, res) => {
   const styles = {};
   styles.product_id = req.params.product_id;
 
-  let results = []; // Array of objects. One object for each style_id
-  // db.query(`SELECT * FROM styles WHERE productId = ${req.params.product_id}`, (err, data) => {
-    db.query(`SELECT id AS style_id, name, original_price, sale_price, default_style AS 'default?' FROM styles WHERE productId = ${req.params.product_id}`, (err, data) => {
-    if (err) {
-      console.log(err);
-    }
-    results = data;
-    styles.results = results;
+  // let results = []; // Array of objects. One object for each style_id
+  db.query(
+    `SELECT JSON_ARRAYAGG(JSON_OBJECT(
+      'style_id', s.id,
+      'name', s.name,
+      'original_price', s.original_price,
+      'sale_price', s.sale_price,
+      'default?', s.default_style,
 
-    // Create photos array and add to current object
-
-    // TODO: Convert default_style from a 1/0 to true/false
-    res.send(styles);
+      'photos', (JSON_ARRAYAGG(JSON_OBJECT(
+        'thumbnail_url', p.thumbnail_url,
+        'url', url
+      )) FROM photos AS p WHERE p.styleId = s.id)
+    )) FROM styles AS s WHERE s.productId = ${req.params.product_id}`, (err, data) => {
+      if (err) {
+        console.log(err);
+      }
+      // res.send(data);
+      let fixed = data.map((result) => {
+        let key = Object.keys(result)[0];
+        return JSON.parse(result[key]);
+      });
+      styles.results = fixed[0];
+      res.send(styles);
   });
 });
-
-// const styleObj = {
-//   style_id: stylesObj.id,
-//   name: stylesObj.name,
-//   original_price: stylesObj.original_price,
-//   sale_price: stylesObj.sale_price === 'null' ? '0' : stylesObj.sale_price,
-//   'default?': stylesObj.default_style === 0,
-// };
-
-// app.get('/products/:product_id/styles', (req, res) => {
-//   // Initialize styles object
-//   const styles = {};
-//   styles.product_id = req.params.product_id;
-
-//   const results = [];
-//   db.query(`SELECT * FROM styles WHERE productId = ${req.params.product_id}`, (stylesErr, stylesData) => {
-//     if (stylesErr) {
-//       console.log(stylesErr);
-//     }
-//     const stylesPromise = new Promise((resolveStyles, rejectStyles) => {
-//       stylesData.forEach((stylesObj) => {
-//         const styleObj = {
-//           style_id: stylesObj.id,
-//           name: stylesObj.name,
-//           original_price: stylesObj.original_price,
-//           sale_price: stylesObj.sale_price === 'null' ? '0' : stylesObj.sale_price,
-//           'default?': stylesObj.default_style === 0,
-//         };
-
-//         const photos = [];
-//         db.query(`SELECT * FROM photos WHERE styleId = ${stylesObj.id}`, (photosErr, photosData) => {
-//           if (photosErr) {
-//             console.log(photosErr);
-//           }
-//           const photosPromise = new Promise((resolvePhotos, rejectPhotos) => {
-//             photosData.forEach((photosObj) => {
-//               const photoObj = {
-//                 thumbnail_url: photosObj.thumbnail_url,
-//                 url: photosObj.url
-//               };
-//               photos.push(photoObj);
-//             });
-//             // styleObj.photos = photos;
-//             resolvePhotos();
-//           });
-//         });
-
-//         // // Populate skus obj for current style_id
-//         // const skus = {}; // skus obj might contain many objects
-//         // db.query(`SELECT * FROM skus WHERE styleId = ${stylesObj.id}`, (skusErr, skusData) => {
-//         //   if (skusErr) {
-//         //     console.log(skusErr);
-//         //   }
-//         //   skusData.forEach((skusObj) => { // for each skusObj
-//         //     const skuObj = {
-//         //       quantity: skusObj.quantity,
-//         //       size: skusObj.size
-//         //     };
-//         //     skus[skusObj.styleId] = skuObj;
-//         //   });
-//         // });
-//         // styleObj.skus = skus;
-
-//         results.push(styleObj);
-//       });
-//     });
-//   });
-// });
 
 // Return array of product_ids related to current product
 app.get('/products/:product_id/related', (req, res) => {
