@@ -70,17 +70,22 @@ app.get('/products/:product_id/styles', (req, res) => {
       'sale_price', s.sale_price,
       'default?', s.default_style,
 
-      'photos', (JSON_ARRAYAGG(JSON_OBJECT(
+      'photos', (SELECT JSON_ARRAYAGG(JSON_OBJECT(
         'thumbnail_url', p.thumbnail_url,
         'url', url
-      )) FROM photos AS p WHERE p.styleId = s.id)
+      )) FROM photos AS p WHERE p.styleId = s.id),
+
+      'skus', (SELECT JSON_OBJECTAGG(skus.id, JSON_OBJECT(
+        'quantity', skus.quantity,
+        'size', skus.size
+      )) FROM skus AS skus WHERE skus.styleId = s.id)
+
     )) FROM styles AS s WHERE s.productId = ${req.params.product_id}`, (err, data) => {
       if (err) {
         console.log(err);
       }
-      // res.send(data);
-      let fixed = data.map((result) => {
-        let key = Object.keys(result)[0];
+      const fixed = data.map((result) => {
+        const key = Object.keys(result)[0];
         return JSON.parse(result[key]);
       });
       styles.results = fixed[0];
