@@ -43,14 +43,12 @@ app.get('/products/:product_id', (req, res) => {
         console.log(err);
       }
       const key = Object.keys(data[0])[0];
-      const editedData = data[0][key];
-      res.send(editedData);
+      res.send(data[0][key]);
   });
 });
 
 // Return obj containing all styles for current product
 app.get('/products/:product_id/styles', (req, res) => {
-  // Initialize styles object
   const styles = {};
   styles.product_id = req.params.product_id;
 
@@ -59,8 +57,8 @@ app.get('/products/:product_id/styles', (req, res) => {
       'style_id', s.id,
       'name', s.name,
       'original_price', s.original_price,
-      'sale_price', s.sale_price,
-      'default?', s.default_style,
+      'sale_price', IF(s.sale_price = 'null', 0, s.sale_price),
+      'default?', IF(s.default_style = 1, true, false),
 
       'photos', (SELECT JSON_ARRAYAGG(JSON_OBJECT(
         'thumbnail_url', p.thumbnail_url,
@@ -87,7 +85,7 @@ app.get('/products/:product_id/styles', (req, res) => {
 
 // Return array of product_ids related to current product
 app.get('/products/:product_id/related', (req, res) => {
-  db.query(`SELECT CAST(CONCAT('[', GROUP_CONCAT(related_product_id SEPARATOR ','), ']') AS JSON ) FROM relatedProducts WHERE current_product_id = ${req.params.product_id}`, (err, data) => {
+  db.query(`SELECT JSON_ARRAYAGG(related_product_id) FROM relatedProducts AS r WHERE r.current_product_id = ${req.params.product_id}`, (err, data) => {
     if (err) {
       console.log(err);
     }
