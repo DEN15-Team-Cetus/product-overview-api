@@ -4,7 +4,6 @@ CREATE DATABASE productOverview;
 
 USE productOverview;
 
-
 CREATE TABLE products (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(20),
@@ -15,7 +14,7 @@ CREATE TABLE products (
   PRIMARY KEY (id)
 );
 
-LOAD DATA LOCAL INFILE './product.csv'
+LOAD DATA LOCAL INFILE './database/product.csv'
 INTO TABLE products
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -31,7 +30,7 @@ CREATE TABLE features (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-LOAD DATA LOCAL INFILE './features.csv'
+LOAD DATA LOCAL INFILE './database/features.csv'
 INTO TABLE features
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -46,7 +45,7 @@ CREATE TABLE relatedProducts (
   FOREIGN KEY (current_product_id) REFERENCES products(id)
 );
 
-LOAD DATA LOCAL INFILE './related.csv'
+LOAD DATA LOCAL INFILE './database/related.csv'
 INTO TABLE relatedProducts
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -64,7 +63,7 @@ CREATE TABLE styles (
   FOREIGN KEY (productId) REFERENCES products(id)
 );
 
-LOAD DATA LOCAL INFILE './styles.csv'
+LOAD DATA LOCAL INFILE './database/styles.csv'
 INTO TABLE styles
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -80,7 +79,7 @@ CREATE TABLE photos (
   FOREIGN KEY (styleId) REFERENCES styles(id)
 );
 
-LOAD DATA LOCAL INFILE './photos.csv'
+LOAD DATA LOCAL INFILE './database/photos.csv'
 INTO TABLE photos
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
@@ -96,7 +95,7 @@ CREATE TABLE skus (
   FOREIGN KEY (styleId) REFERENCES styles(id)
 );
 
-LOAD DATA LOCAL INFILE './skus.csv'
+LOAD DATA LOCAL INFILE './database/skus.csv'
 INTO TABLE skus
 FIELDS TERMINATED BY ','
 ENCLOSED BY '"'
