@@ -14,13 +14,6 @@ CREATE TABLE products (
   PRIMARY KEY (id)
 );
 
-LOAD DATA LOCAL INFILE './database/product.csv'
-INTO TABLE products
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE features (
   id INT NOT NULL AUTO_INCREMENT,
   product_id INT,
@@ -30,13 +23,6 @@ CREATE TABLE features (
   FOREIGN KEY (product_id) REFERENCES products(id)
 );
 
-LOAD DATA LOCAL INFILE './database/features.csv'
-INTO TABLE features
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE relatedProducts (
   id INT NOT NULL AUTO_INCREMENT,
   current_product_id INT,
@@ -44,13 +30,6 @@ CREATE TABLE relatedProducts (
   PRIMARY KEY (id),
   FOREIGN KEY (current_product_id) REFERENCES products(id)
 );
-
-LOAD DATA LOCAL INFILE './database/related.csv'
-INTO TABLE relatedProducts
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
 
 CREATE TABLE styles (
   id INT NOT NULL AUTO_INCREMENT,
@@ -63,13 +42,6 @@ CREATE TABLE styles (
   FOREIGN KEY (productId) REFERENCES products(id)
 );
 
-LOAD DATA LOCAL INFILE './database/styles.csv'
-INTO TABLE styles
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE photos (
   id INT NOT NULL AUTO_INCREMENT,
   styleId INT,
@@ -79,13 +51,6 @@ CREATE TABLE photos (
   FOREIGN KEY (styleId) REFERENCES styles(id)
 );
 
-LOAD DATA LOCAL INFILE './database/photos.csv'
-INTO TABLE photos
-FIELDS TERMINATED BY ','
-ENCLOSED BY '"'
-LINES TERMINATED BY '\n'
-IGNORE 1 ROWS;
-
 CREATE TABLE skus (
   id INT NOT NULL AUTO_INCREMENT,
   styleId INT,
@@ -94,6 +59,42 @@ CREATE TABLE skus (
   PRIMARY KEY (id),
   FOREIGN KEY (styleId) REFERENCES styles(id)
 );
+
+-- LOAD DATA
+LOAD DATA LOCAL INFILE './database/product.csv'
+INTO TABLE products
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE './database/features.csv'
+INTO TABLE features
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE './database/related.csv'
+INTO TABLE relatedProducts
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE './database/styles.csv'
+INTO TABLE styles
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
+
+LOAD DATA LOCAL INFILE './database/photos.csv'
+INTO TABLE photos
+FIELDS TERMINATED BY ','
+ENCLOSED BY '"'
+LINES TERMINATED BY '\n'
+IGNORE 1 ROWS;
 
 LOAD DATA LOCAL INFILE './database/skus.csv'
 INTO TABLE skus

@@ -3,12 +3,11 @@
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable guard-for-in */
 /* eslint-disable import/extensions */
-const request = require('supertest');
+// const request = require('supertest');
 const express = require('express');
 const db = require('../database/index.js');
 
 const app = express();
-app.use(express.static('public'));
 
 app.set('port', 3000);
 app.use(express.json()); // Allows us to parse json
@@ -96,9 +95,9 @@ app.get('/products/:product_id/related', (req, res) => {
   });
 });
 
-// app.get('/loaderio-fe958348661a86d11a92cf73648005d3.txt', (req, res) => {
-//   res.sendFile('loaderio-fe958348661a86d11a92cf73648005d3.txt');
-// });
+app.get('/loaderio-fe958348661a86d11a92cf73648005d3', (req, res) => {
+  res.send('loaderio-fe958348661a86d11a92cf73648005d3');
+});
 
 app.listen(app.get('port'), () => {
   console.log('Now listening on port 3000');
