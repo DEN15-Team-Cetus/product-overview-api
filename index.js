@@ -98,8 +98,8 @@ app.get('/products/related', (req, res) => {
   });
 });
 
-app.get('/loaderio-925ccb8de6f425a938eb30716f024c31', (req, res) => {
-  res.send('loaderio-925ccb8de6f425a938eb30716f024c31');
+app.get('/loaderio-fe958348661a86d11a92cf73648005d3', (req, res) => {
+  res.send('loaderio-fe958348661a86d11a92cf73648005d3');
 });
 
 app.listen(app.get('port'), () => {

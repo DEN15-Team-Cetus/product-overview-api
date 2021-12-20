@@ -3,12 +3,11 @@
     "axios": "^0.24.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
-    "mysql": "^2.18.1",
     "mysql2": "^2.3.3"
   },
   "scripts": {
     "start": "nodemon ./server/index.js -w",
-    "test": "node ./server/serverspec.js"
+    "test": "k6 run ./loadTest/getProducts.js"
   },
   "devDependencies": {
     "eslint": "^8.2.0",

@@ -7,6 +7,7 @@ const app = express();
 app.set('port', 3000);
 app.use(express.json()); // Allows us to parse json
 
+// Get a list of products
 app.get('/products', (req, res) => {
   const count = req.query.count ? req.query.count : 5;
   const page = req.query.page ? req.query.page : 1;
